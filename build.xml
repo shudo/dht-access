@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ===================================
+  Ant build file for DHT Access Tools
+  ===================================
+
+  Targets:
+  jar (default)  Builds the target JAR file target/dhtaccess.jar.
+  javadoc        Generates Javadoc HTML files under docs/.
+  clean          Deletes all JAR files, compiled class files and Javadoc files.
+  dist           Prepares for distribution.
+                 Builds and clean up files excepts resulting JARs.
+-->
+
+<project name="dhtaccess" default="jar" basedir=".">
+	<!-- Give user a chance to override without editing this file 
+		(and without typing -D each time it compiles it) -->
+	<property file="${user.home}/.ant.properties" />
+	<property file=".ant.properties" />
+
+	<!-- set global properties for this build -->
+
+	<!-- javadoc properties -->
+	<property name="javadoc.header" value="DHT Access Tools"/>
+	<property name="javadoc.windowtitle" value="DHT Access Tools"/>
+
+	<!-- directories -->
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="build.dir" value="${basedir}/build"/>
+
+	<property name="target.dir" value="${basedir}/target"/>
+	<property name="javadoc.dir" value="${basedir}/docs"/>
+
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="build.dir" value="${basedir}/build"/>
+
+	<property name="main.jar" value="${target.dir}/dhtaccess.jar"/>
+
+	<!-- main classes -->
+	<property name="main.class.name" value="dhtaccess.tools.Get"/>
+
+	<!-- compile flags -->
+	<property name="target.vm.ver" value="5"/>
+	<property name="debug" value="on"/>
+	<property name="deprecation" value="on"/>
+	<property name="optimize" value="on"/>
+
+	<!-- classpath -->
+	<path id="cli.classpath">
+		<pathelement location="${lib.dir}/commons-cli-1.2.jar"/>
+	</path>
+	<path id="xmlrpc.classpath">
+		<pathelement location="${lib.dir}/xmlrpc-common-3.1.3.jar"/>
+		<pathelement location="${lib.dir}/xmlrpc-client-3.1.3.jar"/>
+	</path>
+
+	<path id="compile.classpath">
+		<path refid="cli.classpath"/>
+		<path refid="xmlrpc.classpath"/>
+	</path>
+
+	<!-- Eclipse-and-CVS-related files -->
+	<fileset dir="${basedir}" id="eclipse.file">
+		<include name=".classpath"/>
+		<include name=".project"/>
+		<include name=".cdtproject"/>
+		<include name=".settings"/>
+	</fileset>
+	<fileset dir="${basedir}" id="cvs.file">
+		<include name=".cvsignore"/>
+		<include name="**/CVS/**"/>
+		<include name="**/CVS"/>
+	</fileset>
+
+	<!-- targets -->
+
+	<!-- target: jar -->
+	<target name="jar" depends="clean.jar, compile">
+		<mkdir dir="${target.dir}"/>
+		<jar destfile="${main.jar}" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class.name}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- target: compile -->
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+		<javac srcdir="${src.dir}"
+			destdir="${build.dir}"
+			classpathref="compile.classpath"
+			debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"/>
+			<!-- target="${target.vm.ver}" -->
+
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<include name="*.properties"/>
+				<include name="resources/**"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- target: dist -->
+	<target name="dist" depends="distclean">
+		<antcall target="jar"/>
+		<antcall target="javadoc"/>
+		<antcall target="clean.build"/>
+	</target>
+
+	<!-- target: javadoc -->
+	<target name="javadoc">
+		<javadoc
+			packagenames="dhtaccess.*"
+			defaultexcludes="yes"
+			private="yes"
+			destdir="${javadoc.dir}"
+			windowtitle="${javadoc.windowtitle}"
+			header="${javadoc.header}">
+			<classpath refid="compile.classpath"/>
+			<fileset dir="${src.dir}">
+				<include name="**/*.java"/>
+				<!-- <exclude name="exclude"/> -->
+			</fileset>
+		</javadoc>
+	</target>
+
+	<!-- target: clean -->
+	<target name="clean"
+		depends="clean.javadoc, clean.jar, clean.build">
+	</target>
+
+	<target name="distclean"
+		depends="clean">
+		<defaultexcludes remove="**/.cvsignore"/>
+		<defaultexcludes remove="**/CVS"/>
+		<defaultexcludes remove="**/CVS/**"/>
+		<delete includeemptydirs="true" quiet="true">
+			<fileset refid="eclipse.file"/>
+			<fileset refid="cvs.file"/>
+		</delete>
+		<defaultexcludes default="true"/>
+	</target>
+
+	<target name="clean.javadoc">
+		<delete dir="${javadoc.dir}"/>
+	</target>
+
+	<target name="clean.jar">
+		<delete file="${main.jar}"/>
+		<delete dir="${target.dir}"/>
+	</target>
+
+	<target name="clean.build">
+		<delete dir="${build.dir}"/>
+	</target>
+</project>

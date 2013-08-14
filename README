@@ -1,0 +1,61 @@
+DHT Access Tools
+
+What this is
+------------
+
+DHT Access Tools is a set of tools to access remotely a DHT operated with
+Bamboo DHT or Overlay Weaver. The tools communicates with a node on a
+DHT in an XML-RPC protocol.
+
+  The Bamboo Distributed Hash Table
+  http://bamboo-dht.org/
+
+  Overlay Weaver: An Overlay Construction Toolkit
+  http://overlayweaver.sf.net/
+
+DHT Shell of Overlay Weaver accepts requests in the XML-RPC protocol
+in case that it was invoked with '-x' option. See the manual:
+http://overlayweaver.sf.net/doc/manual/dhtshell/
+
+In bin directory, you will find shell scripts to get, put an remove a
+key-value pair to/from a DHT. These tools are compatible with
+corresponding tools written in Python (src/dht/{put,get,rm}.py in a
+Bamboo archive).
+
+There is a publicly accessible DHT service named OpenDHT and we can
+test the tools with it.
+
+  OpenDHT: A Publicly Accessible DHT Service
+  http://opendht.org/
+
+  Overlay Weaver operated on PlanetLab
+  Search the web with "Overlay Weaver Node" to find nodes
+
+Build
+-----
+
+We require the following software to build DHT Access Tools.
+
+  * Java Development (JDK) 5.0 or later
+  * Apache Ant
+
+Use Apache Ant to build this software.
+
+  % ant
+
+Usage
+-----
+
+The dht-access/bin directory holds shell scripts of UNIX-like OSes and
+batch files for Windows. The gateway URL
+(e.g. http://opendht.nyuld.net:5851/) can be specified with -g option
+or an environment variable DHT_GATEWAY.
+
+Licensing
+---------
+
+This software is licensed under the terms you find in the file named
+LICENSE in this directory.
+
+					Kazuyuki Shudo
+					http://www.shudo.net/
